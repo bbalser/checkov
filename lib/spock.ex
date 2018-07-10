@@ -15,32 +15,34 @@ defmodule Spock do
       end
     end)
 
-    {variables, data} = separate_data(where)
+    bindings = get_bindings(where)
 
-    Enum.map(data, fn values ->
-      create_test(name, variables, values, test_block, context)
+    Enum.map(bindings, fn binding ->
+      unrolled_name(name, binding)
+      |> create_test(binding, test_block, context)
     end)
   end
 
-  defp create_test(name, variables, data, test_block, context) do
-    binding = Enum.zip(variables, data)
+  defp unrolled_name(name, binding) do
     {unrolled_name, _ } = Code.eval_quoted(name, binding)
+    unrolled_name
+  end
 
+  defp create_test(name, binding, test_block, context) do
     quoted_variables = Enum.map(binding, fn { var, value} ->
       {:=, [], [{:var!, [context: Elixir, import: Kernel], [{var, [], Elixir}]}, value]}
     end)
 
     quote do
-      test unquote(unrolled_name), unquote(context) do
+      test unquote(name), unquote(context) do
         unquote_splicing(quoted_variables)
         unquote(test_block)
       end
     end
   end
 
-
-  defp separate_data({:where, _, [[head|tail]]}) do
-    {head, tail}
+  defp get_bindings({:where, _ , [[variables|data]]}) do
+    Enum.map(data, fn list -> Enum.zip(variables, list) end)
   end
 
 end

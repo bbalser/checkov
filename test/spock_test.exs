@@ -7,7 +7,8 @@ defmodule SpockTest do
     where [
       [:a, :b, :result],
       [1, 2, 3],
-      [4, 5, 9]
+      [4, 5, 9],
+      [1.2, 3.4, 4.6]
     ]
   end
 

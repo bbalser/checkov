@@ -24,9 +24,21 @@ defmodule Spock do
   end
 
   defp unrolled_name(name, binding) do
-    {unrolled_name, _ } = Code.eval_quoted(name, binding)
+    name_block = Macro.postwalk(name, fn exp ->
+      case is_binding_variable?(exp, binding) do
+        true -> {:var!, [context: Elixir, import: Kernel], [exp]}
+        false -> exp
+      end
+    end)
+
+    {unrolled_name, _ } = Code.eval_quoted(name_block, binding)
     unrolled_name
   end
+
+  defp is_binding_variable?({atom, _, nil}, binding) do
+    Keyword.has_key?(binding, atom)
+  end
+  defp is_binding_variable?(_exp, _binding), do: false
 
   defp create_test(name, binding, test_block, context) do
     quoted_variables = Enum.map(binding, fn { var, value} ->

@@ -1,8 +1,8 @@
-defmodule Spock do
+defmodule Checkov do
 
   defmacro __using__(_opts) do
     quote do
-      import Spock
+      import Checkov
       use ExUnit.Case
     end
   end
@@ -41,8 +41,8 @@ defmodule Spock do
   defp is_binding_variable?(_exp, _binding), do: false
 
   defp create_test(name, binding, test_block, context) do
-    quoted_variables = Enum.map(binding, fn { var, value} ->
-      {:=, [], [{:var!, [context: Elixir, import: Kernel], [{var, [], Elixir}]}, value]}
+    quoted_variables = Enum.map(binding, fn { variable_name, variable_value} ->
+      {:=, [], [{:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]}, variable_value]}
     end)
 
     quote do
@@ -53,8 +53,19 @@ defmodule Spock do
     end
   end
 
+  defp get_bindings({:where, _, [[{key,data}|_tail] = keywords]}) when is_atom(key) do
+    0..(Enum.count(data)-1)
+    |> Enum.map(fn index -> create_binding(keywords, index) end)
+  end
   defp get_bindings({:where, _ , [[variables|data]]}) do
     Enum.map(data, fn list -> Enum.zip(variables, list) end)
+  end
+
+  defp create_binding(keywords, index) do
+    Keyword.keys(keywords)
+    |> Enum.map(fn key ->
+      { key, Keyword.get(keywords, key) |> Enum.at(index) }
+    end)
   end
 
 end

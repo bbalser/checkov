@@ -1,5 +1,5 @@
-defmodule SpockTest do
-  use Spock
+defmodule CheckovTest do
+  use Checkov
 
   data_test "#{a} + #{b} == #{result}" do
     assert a + b == result
@@ -8,7 +8,7 @@ defmodule SpockTest do
       [:a, :b, :result],
       [1, 2, 3],
       [4, 5, 9],
-      [1.2, 3.4, 4.6]
+      [1.2, 3.4, 4.6],
     ]
   end
 
@@ -21,6 +21,23 @@ defmodule SpockTest do
       [1, 2],
       [100, 101]
     ]
+  end
+
+  # data_test "holler" do
+  #   assert x == y
+
+  #   where [
+  #     [:x, :y],
+  #     [1, 1],
+  #     [2, 2]
+  #   ]
+  # end
+
+  data_test "equality: #{x} == #{y}" do
+    assert x == y
+
+    where x: [1,2,3,4],
+          y: [1,2,3,4]
   end
 
   defp stuff(x), do: x + 1

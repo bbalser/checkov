@@ -23,16 +23,6 @@ defmodule CheckovTest do
     ]
   end
 
-  # data_test "holler" do
-  #   assert x == y
-
-  #   where [
-  #     [:x, :y],
-  #     [1, 1],
-  #     [2, 2]
-  #   ]
-  # end
-
   data_test "equality: #{x} == #{y}" do
     assert x == y
 

@@ -15,12 +15,20 @@ defmodule Checkov do
       end
     end)
 
-    bindings = get_bindings(where)
-
-    Enum.map(bindings, fn binding ->
-      unrolled_name(name, binding)
-      |> create_test(binding, test_block, context)
+    get_bindings(where)
+    |> Enum.map(fn binding -> { unrolled_name(name, binding), binding } end)
+    |> Enum.reduce([], fn {name, binding}, acc -> [ {name, fix_name(name, acc), binding} | acc] end)
+    |> Enum.map(fn {_original_name, name, binding} ->
+      create_test(name, binding, test_block, context)
     end)
+  end
+
+  defp fix_name(name, test_defs) do
+    count = Enum.count(test_defs, fn {original_name, fixed_name, _binding} -> original_name == name end)
+    case count == 0 do
+      true -> name
+      false -> name <> " - #{count+1}"
+    end
   end
 
   defp unrolled_name(name, binding) do

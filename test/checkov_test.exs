@@ -30,6 +30,13 @@ defmodule CheckovTest do
           y: [1,2,3,4]
   end
 
+  data_test "something" do
+    assert x == y
+
+    where x: [1, 2, 4],
+          y: [1, 2, 4]
+  end
+
   defp stuff(x), do: x + 1
 
 end

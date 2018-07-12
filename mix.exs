@@ -7,7 +7,10 @@ defmodule Checkov.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      description: description(),
+      package: package(),
+      deps: deps(),
+      name: "Checkov",
     ]
   end
 
@@ -20,4 +23,18 @@ defmodule Checkov.MixProject do
   defp deps do
     []
   end
+
+  defp package do
+    [
+      maintainers: ["Brian Balser"],
+      licenses: ["Apache 2.0"],
+      links: %{"GitHub" => "https://github.com/bbalser/checkov"}
+    ]
+  end
+
+  defp description do
+    "A parameterized testing library attempting to emulate the where block of [Spock](http://spockframework.org/)."
+  end
+
+
 end

@@ -1,4 +1,68 @@
 defmodule Checkov do
+  @moduledoc """
+
+  Checkov aims to emulate the data driven testing functionality of the [Spock Framework](http://spockframework.org/)
+
+  A where block can be used in a data_test to exercise the assertions of the test multiple times.
+
+  ```
+  defmodule MyModuleTest do
+    use ExUnit.Case
+    import Checkov
+
+    data_test "\#{a} + \#{b} == \#{result}" do
+      assert a + b == result
+
+      where [
+        [:a, :b, :result],
+        [1, 2, 3],
+        [4, 5, 9],
+        [1.2, 3.4, 4.6],
+      ]
+    end
+
+  end
+  ```
+
+  Will create and run three tests.
+
+  ```
+  MyModuleTest
+  * test 4 + 5 == 9 (0.00ms)
+  * test 1 + 2 == 3 (0.00ms)
+  * test 1.2 + 3.4 == 4.6 (0.00ms)
+
+
+  Finished in 0.03 seconds
+  3 tests, 0 failures
+  ```
+
+  Checkov also support an alternative syntax, below will create and run the same three tests.
+
+  ```
+  defmodule MyModuleTest do
+    use ExUnit.Case
+    import Checkov
+
+    data_test "\#{a} + \#{b} == \#{result}" do
+      assert a + b == result
+
+      where a:      [1, 4, 1.2],
+            b:      [2, 5, 3.4],
+            result: [3, 9, 4.6]
+
+    end
+
+  end
+
+  ```
+
+  Data tests also accept an optional second paramter where you can receive the context from a setup block.
+  Any variable created in there where block is available to be used in the name of the test!
+
+  """
+
+
 
   defmacro __using__(_opts) do
     quote do
@@ -24,10 +88,10 @@ defmodule Checkov do
   end
 
   defp fix_name(name, test_defs) do
-    count = Enum.count(test_defs, fn {original_name, fixed_name, _binding} -> original_name == name end)
+    count = Enum.count(test_defs, fn {original_name, _fixed_name, _binding} -> original_name == name end)
     case count == 0 do
       true -> name
-      false -> name <> " - #{count+1}"
+      false -> name <> " [#{count+1}]"
     end
   end
 

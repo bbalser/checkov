@@ -4,7 +4,7 @@ defmodule Checkov.MixProject do
   def project do
     [
       app: :checkov,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -21,7 +21,9 @@ defmodule Checkov.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+    ]
   end
 
   defp package do
@@ -33,7 +35,7 @@ defmodule Checkov.MixProject do
   end
 
   defp description do
-    "A parameterized testing library attempting to emulate the where block of [Spock](http://spockframework.org/)."
+    "A parameterized testing library attempting to emulate the data driven testing of the [Spock Framework](http://spockframework.org/)."
   end
 
 

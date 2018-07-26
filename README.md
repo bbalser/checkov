@@ -69,7 +69,7 @@ by adding `checkov` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:checkov, "~> 0.2.0"}
+    {:checkov, "~> 0.3.0", only: :test}
   ]
 end
 ```

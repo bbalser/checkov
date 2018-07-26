@@ -62,7 +62,9 @@ defmodule Checkov do
 
   """
 
-
+  defmodule InvalidBindingsException do
+    defexception [:message]
+  end
 
   defmacro __using__(_opts) do
     quote do
@@ -72,18 +74,26 @@ defmodule Checkov do
   end
 
   defmacro data_test(name, context \\ quote(do: %{}), do: do_block) do
-    {test_block, where} = Macro.prewalk(do_block, {}, fn exp, acc ->
-      case match?({:where, _, _}, exp) do
-        true -> {nil, exp}
-        false -> {exp, acc}
-      end
-    end)
+    {test_block, where} = extract_where_function(do_block)
+
+    if not valid_bindings?(where) do
+      raise InvalidBindingsException, message: "All bindings in where function must be the same length"
+    end
 
     get_bindings(where)
     |> Enum.map(fn binding -> { unrolled_name(name, binding), binding } end)
     |> Enum.reduce([], fn {name, binding}, acc -> [ {name, fix_name(name, acc), binding} | acc] end)
     |> Enum.map(fn {_original_name, name, binding} ->
       create_test(name, binding, test_block, context)
+    end)
+  end
+
+  defp extract_where_function(body) do
+    Macro.prewalk(body, {}, fn exp, acc ->
+      case match?({:where, _, _}, exp) do
+        true -> {nil, exp}
+        false -> {exp, acc}
+      end
     end)
   end
 
@@ -138,6 +148,17 @@ defmodule Checkov do
     |> Enum.map(fn key ->
       { key, Keyword.get(keywords, key) |> Enum.at(index) }
     end)
+  end
+
+  defp valid_bindings?({:where, _, [[{key,_data}|_tail] = keywords]}) when is_atom(key) do
+    Keyword.values(keywords) |> all_same_count?()
+  end
+  defp valid_bindings?({:where, _, [list]}) do
+    all_same_count?(list)
+  end
+
+  defp all_same_count?([head|tail]) do
+    Enum.all?(tail, fn sublist -> Enum.count(sublist) == Enum.count(head) end)
   end
 
 end

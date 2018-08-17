@@ -9,6 +9,8 @@ defmodule CheckovTest do
       [1, 2, 3],
       [4, 5, 9],
       [1.2, 3.4, 4.6],
+      [2, -3, -1],
+      [2, 4, 2*3]
     ]
   end
 
@@ -26,15 +28,15 @@ defmodule CheckovTest do
   data_test "equality: #{x} == #{y}" do
     assert x == y
 
-    where x: [1,2,3,4],
-          y: [1,2,3,4]
+    where x: [1,2,3,4, 2*3],
+          y: [1,2,3,4, 6]
   end
 
   data_test "something" do
     assert x == y
 
-    where x: [1, 2, 4],
-          y: [1, 2, 4]
+    where x: [1, 2, 4, -1],
+          y: [1, 2, 4, -1]
   end
 
   defp stuff(x), do: x + 1

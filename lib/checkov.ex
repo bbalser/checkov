@@ -140,13 +140,14 @@ defmodule Checkov do
     |> Enum.map(fn index -> create_binding(keywords, index) end)
   end
   defp get_bindings({:where, _ , [[variables|data]]}) do
-    Enum.map(data, fn list -> Enum.zip(variables, list) end)
+    {evaled_data, _} = Code.eval_quoted(data)
+    Enum.map(evaled_data, fn list -> Enum.zip(variables, list) end)
   end
 
   defp create_binding(keywords, index) do
     Keyword.keys(keywords)
     |> Enum.map(fn key ->
-      { key, Keyword.get(keywords, key) |> Enum.at(index) }
+      { key, Keyword.get(keywords, key) |> Enum.at(index) |> Code.eval_quoted |> elem(0) }
     end)
   end
 

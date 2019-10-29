@@ -1,15 +1,14 @@
 defmodule Checkov.TestName do
-
   def unroll_name(name, binding) do
     {processed_name, used_bindings} = process_name(name, binding)
     evaluated_binding = evaluate_binding(used_bindings)
 
-    {unrolled_name, _ } = Code.eval_quoted(processed_name, evaluated_binding)
+    {unrolled_name, _} = Code.eval_quoted(processed_name, evaluated_binding)
     unrolled_name
   end
 
   defp evaluate_binding(binding) do
-    Enum.map(binding, fn {key,quoted_exp} ->
+    Enum.map(binding, fn {key, quoted_exp} ->
       {value, _} = Code.eval_quoted(quoted_exp)
       {key, value}
     end)
@@ -30,6 +29,6 @@ defmodule Checkov.TestName do
       false -> nil
     end
   end
-  defp binding_variable(_exp, _binding), do: nil
 
+  defp binding_variable(_exp, _binding), do: nil
 end

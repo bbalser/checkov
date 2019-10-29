@@ -10,7 +10,7 @@ defmodule CheckovTest do
       [4, 5, 9],
       [1.2, 3.4, 4.6],
       [2, -3, -1],
-      [2, 4, 2*3]
+      [2, 4, 2 * 3]
     ]
   end
 
@@ -28,8 +28,8 @@ defmodule CheckovTest do
   data_test "equality: #{x} == #{y}" do
     assert x == y
 
-    where x: [1,2,3,4, 2*3],
-          y: [1,2,3,4, 6]
+    where x: [1, 2, 3, 4, 2 * 3],
+          y: [1, 2, 3, 4, 6]
   end
 
   data_test "something" do
@@ -39,12 +39,28 @@ defmodule CheckovTest do
           y: [1, 2, 4, -1]
   end
 
+  data_test "jello - #{y}" do
+    assert x == y
+
+    where x: [1, 2, 3],
+          y: FakeSetup.y_values()
+  end
+
   data_test "popsicles" do
     assert x == y
+
     where x: [stuff(1)],
           y: [2]
   end
 
-  defp stuff(x), do: x + 1
+  data_test "popsicles 2" do
+    assert x == y
 
+    where [
+      [:x, :y],
+      [stuff(1), 2]
+    ]
+  end
+
+  defp stuff(x), do: x + 1
 end

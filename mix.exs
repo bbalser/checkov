@@ -10,7 +10,7 @@ defmodule Checkov.MixProject do
       description: description(),
       package: package(),
       deps: deps(),
-      name: "Checkov",
+      name: "Checkov"
     ]
   end
 
@@ -22,7 +22,7 @@ defmodule Checkov.MixProject do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.19.1", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.19.1", only: :dev, runtime: false}
     ]
   end
 
@@ -37,6 +37,4 @@ defmodule Checkov.MixProject do
   defp description do
     "A parameterized testing library attempting to emulate the data driven testing of the [Spock Framework](http://spockframework.org/)."
   end
-
-
 end

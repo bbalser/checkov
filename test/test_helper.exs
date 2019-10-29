@@ -1,7 +1,7 @@
 ExUnit.start(trace: true)
 
 defmodule CompileTimeAssertions do
-  defmodule DidNotRaise, do: defstruct(message: nil)
+  defmodule(DidNotRaise, do: defstruct(message: nil))
 
   defmacro assert_compile_time_raise(expected_exception, expected_message, do: do_block) do
     actual_exception =
@@ -17,5 +17,8 @@ defmodule CompileTimeAssertions do
       assert unquote(actual_exception.message) === unquote(expected_message)
     end
   end
+end
 
+defmodule FakeSetup do
+  def y_values(), do: [1, 2, 3]
 end

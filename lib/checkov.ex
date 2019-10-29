@@ -77,12 +77,13 @@ defmodule Checkov do
     {test_block, where} = extract_where_function(do_block)
 
     if not Checkov.Binding.valid?(where) do
-      raise InvalidBindingsException, message: "All bindings in where function must be the same length"
+      raise InvalidBindingsException,
+        message: "All bindings in where function must be the same length"
     end
 
     Checkov.Binding.get_bindings(where)
-    |> Enum.map(fn binding -> { Checkov.TestName.unroll_name(name, binding), binding } end)
-    |> Enum.reduce([], fn {name, binding}, acc -> [ {name, fix_name(name, acc), binding} | acc] end)
+    |> Enum.map(fn binding -> {Checkov.TestName.unroll_name(name, binding), binding} end)
+    |> Enum.reduce([], fn {name, binding}, acc -> [{name, fix_name(name, acc), binding} | acc] end)
     |> Enum.map(fn {_original_name, name, binding} ->
       create_test(name, binding, test_block, context)
     end)
@@ -98,17 +99,24 @@ defmodule Checkov do
   end
 
   defp fix_name(name, test_defs) do
-    count = Enum.count(test_defs, fn {original_name, _fixed_name, _binding} -> original_name == name end)
+    count =
+      Enum.count(test_defs, fn {original_name, _fixed_name, _binding} -> original_name == name end)
+
     case count == 0 do
       true -> name
-      false -> name <> " [#{count+1}]"
+      false -> name <> " [#{count + 1}]"
     end
   end
 
   defp create_test(name, binding, test_block, context) do
-    quoted_variables = Enum.map(binding, fn { variable_name, variable_value} ->
-      {:=, [], [{:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]}, variable_value]}
-    end)
+    quoted_variables =
+      Enum.map(binding, fn {variable_name, variable_value} ->
+        {:=, [],
+         [
+           {:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]},
+           variable_value
+         ]}
+      end)
 
     quote do
       test unquote(name), unquote(context) do
@@ -117,6 +125,4 @@ defmodule Checkov do
       end
     end
   end
-
-
 end

@@ -39,6 +39,12 @@ defmodule CheckovTest do
           y: [1, 2, 4, -1]
   end
 
+  data_test "popsicles" do
+    assert x == y
+    where x: [stuff(1)],
+          y: [2]
+  end
+
   defp stuff(x), do: x + 1
 
 end

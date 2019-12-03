@@ -62,5 +62,14 @@ defmodule CheckovTest do
     ]
   end
 
+  data_test "#{name}" do
+    assert true
+
+    where [
+      [:name],
+      ["no unused variable warning"]
+    ]
+  end
+
   defp stuff(x), do: x + 1
 end

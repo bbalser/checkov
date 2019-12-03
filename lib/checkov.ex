@@ -111,10 +111,10 @@ defmodule Checkov do
   defp create_test(name, binding, test_block, context) do
     quoted_variables =
       Enum.map(binding, fn {variable_name, variable_value} ->
-        {:=, [],
+        {:__block__, [],
          [
-           {:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]},
-           variable_value
+           {:=, [], [{:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]}, variable_value]},
+           {:=, [], [{:_, [], Elixir}, {:var!, [context: Elixir, import: Kernel], [{variable_name, [], Elixir}]}]}
          ]}
       end)
 

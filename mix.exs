@@ -4,7 +4,7 @@ defmodule Checkov.MixProject do
   def project do
     [
       app: :checkov,
-      version: "0.5.1",
+      version: "1.0.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: description(),
